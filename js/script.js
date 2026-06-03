@@ -146,29 +146,31 @@ function setupFaqAccordion() {
  * Format phone input dynamically: (XX) XXXXX-XXXX
  */
 function setupPhoneMask() {
-  const phoneInput = document.getElementById('lead-phone');
-  if (!phoneInput) return;
+  const phoneInputs = document.querySelectorAll('#lead-phone, #hero-lead-phone');
+  if (phoneInputs.length === 0) return;
 
-  phoneInput.addEventListener('input', (e) => {
-    let value = e.target.value;
-    
-    // Remove non-numeric characters
-    value = value.replace(/\D/g, '');
-    
-    if (value.length > 11) {
-      value = value.slice(0, 11);
-    }
-    
-    // Apply masking layout
-    if (value.length > 6) {
-      value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
-    } else if (value.length > 2) {
-      value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-    } else if (value.length > 0) {
-      value = `(${value}`;
-    }
-    
-    e.target.value = value;
+  phoneInputs.forEach(phoneInput => {
+    phoneInput.addEventListener('input', (e) => {
+      let value = e.target.value;
+      
+      // Remove non-numeric characters
+      value = value.replace(/\D/g, '');
+      
+      if (value.length > 11) {
+        value = value.slice(0, 11);
+      }
+      
+      // Apply masking layout
+      if (value.length > 6) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+      } else if (value.length > 2) {
+        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else if (value.length > 0) {
+        value = `(${value}`;
+      }
+      
+      e.target.value = value;
+    });
   });
 }
 
@@ -217,117 +219,133 @@ function setupModal() {
  * Submit form data to n8n webhook and handle responses
  */
 function setupFormSubmission() {
-  const form = document.getElementById('diagnostic-form');
-  const submitBtn = document.getElementById('submit-btn');
-
-  if (!form || !submitBtn) return;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Check HTML5 validation state
-    if (!form.checkValidity()) {
-      // Trigger native validation display for inputs
-      form.reportValidity();
-      return;
+  const formsConfig = [
+    {
+      formId: 'diagnostic-form',
+      submitBtnId: 'submit-btn',
+      fields: { name: 'lead-name', phone: 'lead-phone', email: 'lead-email', segment: 'lead-segment', revenue: 'lead-revenue' },
+      origin: 'lp_botconversa_style_modal'
+    },
+    {
+      formId: 'hero-diagnostic-form',
+      submitBtnId: 'hero-submit-btn',
+      fields: { name: 'hero-lead-name', phone: 'hero-lead-phone', email: 'hero-lead-email', segment: 'hero-lead-segment', revenue: 'hero-lead-revenue' },
+      origin: 'lp_botconversa_style_hero'
     }
+  ];
 
-    // Set button visual state to Loading
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="spinner" style="animation: spin 1s linear infinite; margin-right: 8px;">
-        <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
-        <path d="M4 12a8 8 0 0 1 8-8"></path>
-      </svg>
-      <span>Enviando dados...</span>
-    `;
+  formsConfig.forEach(({ formId, submitBtnId, fields, origin }) => {
+    const form = document.getElementById(formId);
+    const submitBtn = document.getElementById(submitBtnId);
 
-    // Inline CSS animation rule for spinner (avoids bloating stylesheet)
-    if (!document.getElementById('spinner-anim')) {
-      const style = document.createElement('style');
-      style.id = 'spinner-anim';
-      style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
-      document.head.appendChild(style);
-    }
+    if (!form || !submitBtn) return;
 
-    // Capture values
-    const name = document.getElementById('lead-name').value.trim();
-    const phone = document.getElementById('lead-phone').value.trim();
-    const email = document.getElementById('lead-email').value.trim();
-    const segment = document.getElementById('lead-segment').value;
-    const revenue = document.getElementById('lead-revenue').value;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    // Capture saved UTM / GCLID parameters
-    const getStorageItem = (key) => sessionStorage.getItem(key) || '';
-    
-    const payload = {
-      name,
-      phone,
-      email,
-      segment,
-      revenue,
-      origin: 'lp_botconversa_style',
-      gclid: getStorageItem('gclid'),
-      utm_source: getStorageItem('utm_source'),
-      utm_medium: getStorageItem('utm_medium'),
-      utm_campaign: getStorageItem('utm_campaign'),
-      utm_content: getStorageItem('utm_content'),
-      utm_term: getStorageItem('utm_term')
-    };
-
-    try {
-      const response = await fetch('https://n8n.aiatende.dev.br/webhook/aiatende_lp2', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error('Network error or server returned error status.');
+      // Check HTML5 validation state
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
       }
 
-      // Fire Analytics dataLayer event
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'lead_form_submit',
-        lead_segment: segment,
-        lead_revenue: revenue
-      });
+      // Set button visual state to Loading
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="spinner" style="animation: spin 1s linear infinite; margin-right: 8px;">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+          <path d="M4 12a8 8 0 0 1 8-8"></path>
+        </svg>
+        <span>Enviando dados...</span>
+      `;
 
-      // Pushing gtag event if tracking script loaded directly
-      if (typeof gtag === 'function') {
-        gtag('event', 'lead_form_submit', {
-          'lead_segment': segment,
-          'lead_revenue': revenue
+      // Inline CSS animation rule for spinner
+      if (!document.getElementById('spinner-anim')) {
+        const style = document.createElement('style');
+        style.id = 'spinner-anim';
+        style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+        document.head.appendChild(style);
+      }
+
+      // Capture values
+      const name = document.getElementById(fields.name).value.trim();
+      const phone = document.getElementById(fields.phone).value.trim();
+      const email = document.getElementById(fields.email).value.trim();
+      const segment = document.getElementById(fields.segment).value;
+      const revenue = document.getElementById(fields.revenue).value;
+
+      // Capture saved UTM / GCLID parameters
+      const getStorageItem = (key) => sessionStorage.getItem(key) || '';
+      
+      const payload = {
+        name,
+        phone,
+        email,
+        segment,
+        revenue,
+        origin: origin,
+        gclid: getStorageItem('gclid'),
+        utm_source: getStorageItem('utm_source'),
+        utm_medium: getStorageItem('utm_medium'),
+        utm_campaign: getStorageItem('utm_campaign'),
+        utm_content: getStorageItem('utm_content'),
+        utm_term: getStorageItem('utm_term')
+      };
+
+      try {
+        const response = await fetch('https://n8n.aiatende.dev.br/webhook/aiatende_lp2', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
         });
-      }
 
-      // Redirect to thank-you confirmation page
-      window.location.href = 'obrigado.html';
+        if (!response.ok) {
+          throw new Error('Network error or server returned error status.');
+        }
 
-    } catch (error) {
-      console.error('Error submitting form to n8n:', error);
-      
-      // Restore button state
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalBtnText;
-      
-      // Display visual error message near the button
-      let errorMsg = document.getElementById('form-error-msg');
-      if (!errorMsg) {
-        errorMsg = document.createElement('p');
-        errorMsg.id = 'form-error-msg';
-        errorMsg.style.color = '#EF4444';
-        errorMsg.style.fontSize = '0.85rem';
-        errorMsg.style.fontWeight = '600';
-        errorMsg.style.marginTop = '12px';
-        errorMsg.style.textAlign = 'center';
-        form.appendChild(errorMsg);
+        // Fire Analytics dataLayer event
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'lead_form_submit',
+          lead_segment: segment,
+          lead_revenue: revenue
+        });
+
+        // Pushing gtag event if tracking script loaded directly
+        if (typeof gtag === 'function') {
+          gtag('event', 'lead_form_submit', {
+            'lead_segment': segment,
+            'lead_revenue': revenue
+          });
+        }
+
+        // Redirect to thank-you confirmation page
+        window.location.href = 'obrigado.html';
+
+      } catch (error) {
+        console.error('Error submitting form to n8n:', error);
+        
+        // Restore button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+        
+        // Display visual error message near the button
+        let errorMsg = form.querySelector('.form-error-msg');
+        if (!errorMsg) {
+          errorMsg = document.createElement('p');
+          errorMsg.className = 'form-error-msg';
+          errorMsg.style.color = '#EF4444';
+          errorMsg.style.fontSize = '0.85rem';
+          errorMsg.style.fontWeight = '600';
+          errorMsg.style.marginTop = '12px';
+          errorMsg.style.textAlign = 'center';
+          form.appendChild(errorMsg);
+        }
+        errorMsg.textContent = 'Erro ao enviar dados. Por favor, tente novamente ou fale conosco no WhatsApp.';
       }
-      errorMsg.textContent = 'Erro ao enviar dados. Por favor, tente novamente ou fale conosco no WhatsApp.';
-    }
+    });
   });
 }
