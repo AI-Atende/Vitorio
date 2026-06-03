@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kommo CRM Pipeline — AtendeOS</title>
-  <meta name="description" content="Simulação interativa do pipeline de leads do Kommo CRM com integração automática do AtendeOS.">
+  <title>Kommo CRM Pipeline — Ai Atende</title>
+  <meta name="description" content="Simulação interativa do pipeline de leads do Kommo CRM com integração automática da Ai Atende.">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -775,7 +775,7 @@
         <div class="breadcrumbs">
           <span>Leads</span>
           <span>&gt;</span>
-          <h2>Funil Principal — AtendeOS</h2>
+          <h2>Funil Principal — Ai Atende</h2>
         </div>
       </div>
       <div class="topbar-right">
@@ -1051,7 +1051,7 @@
               </span>
             </div>
             <div class="lead-tags">
-              <span class="lead-tag tag-whatsapp">AtendeOS</span>
+              <span class="lead-tag tag-whatsapp">Ai Atende</span>
               <span class="lead-tag">CRM Pronto</span>
             </div>
             <div class="lead-card-footer">
@@ -1141,7 +1141,7 @@
             <div class="field-value" id="modalFieldPhone">+55 (81) 99876-5432</div>
           </div>
           <div class="field-item">
-            <span class="field-label">Integração AtendeOS</span>
+            <span class="field-label">Integração Ai Atende</span>
             <div class="field-value" id="modalFieldIntegration" style="color: #10B981; font-weight: 600;">Status: Ativo</div>
           </div>
         </div>
@@ -1630,7 +1630,7 @@
 
       if (simStage === 1) {
         // User answered company name
-        lead.chat.push({ sender: "system", msg: "Webhook AtendeOS disparado: Atualização de nome da empresa.", time: new Date().toLocaleTimeString() });
+        lead.chat.push({ sender: "system", msg: "Webhook Ai Atende disparado: Atualização de nome da empresa.", time: new Date().toLocaleTimeString() });
         
         simStage = 2;
         addWaMessage("received", `Entendido! E em qual **segmento** de mercado a sua empresa atua? (Ex: Saúde, Tecnologia, Varejo, Alimentício...)`);
@@ -1645,7 +1645,7 @@
       else if (simStage === 2) {
         // User answered segment
         lead.segment = userText;
-        lead.chat.push({ sender: "system", msg: `Campo 'Segmento' atualizado para: ${userText} via API AtendeOS.`, time: new Date().toLocaleTimeString() });
+        lead.chat.push({ sender: "system", msg: `Campo 'Segmento' atualizado para: ${userText} via API Ai Atende.`, time: new Date().toLocaleTimeString() });
         
         simStage = 3;
         addWaMessage("received", `Perfeito! Para finalizar e direcionar ao consultor certo, qual a média de **faturamento comercial mensal** de vocês?\n\n*A)* Até R$ 20.000\n*B)* De R$ 20.000 a R$ 100.000\n*C)* Acima de R$ 100.000`);
@@ -1682,7 +1682,7 @@
         updateBoardMetrics();
         
         simStage = 4;
-        addWaMessage("received", `Excelente! Seu perfil foi qualificado com sucesso pelo **AtendeOS**!\n\nUm consultor especializado acaba de receber o alerta no painel do Kommo e vai assumir o atendimento para agendar sua demonstração. Obrigado!`);
+        addWaMessage("received", `Excelente! Seu perfil foi qualificado com sucesso pela **Ai Atende**!\n\nUm consultor especializado acaba de receber o alerta no painel do Kommo e vai assumir o atendimento para agendar sua demonstração. Obrigado!`);
         
         // Finalize task status indicator
         document.getElementById('task-sim').className = "lead-task-indicator"; // green task created
