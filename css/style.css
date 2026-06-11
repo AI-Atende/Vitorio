@@ -246,7 +246,7 @@ body {
   color: var(--text-light-main);
 }
 
-/* SECTION 2 — HERO CENTRALIZADO */
+/* SECTION 2 — HERO COM FORMULÁRIO (SPLIT) */
 .hero {
   background-color: var(--bg-light-alt);
   background-image: 
@@ -256,16 +256,28 @@ body {
   background-size: 100% 100%, 40px 40px, 40px 40px;
   padding-top: 160px;
   padding-bottom: 60px;
-  text-align: center;
+  text-align: left;
+}
+
+.hero-container-split {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 3.25rem;
   line-height: 1.15;
   font-weight: 800;
   color: var(--text-light-main);
-  max-width: 900px;
-  margin: 0 auto 24px auto;
+  margin-bottom: 24px;
   letter-spacing: -1px;
   opacity: 0;
   transform: translateY(20px);
@@ -273,47 +285,128 @@ body {
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: var(--text-light-muted);
-  max-width: 650px;
-  margin: 0 auto 40px auto;
+  margin-bottom: 32px;
   font-weight: 400;
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
 }
 
-.hero-cta-wrapper {
-  margin-bottom: 30px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
-}
-
 .hero-benefits {
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  flex-direction: column;
+  gap: 12px;
   list-style: none;
   padding: 0;
   color: var(--text-light-muted);
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 1rem;
   opacity: 0;
   transform: translateY(20px);
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  margin-bottom: 20px;
 }
 
 .hero-benefits li {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .hero-benefits li svg {
   color: var(--primary);
+  flex-shrink: 0;
   width: 18px;
   height: 18px;
+}
+
+/* Card de Formulário no Hero */
+.hero-form-wrapper {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+  z-index: 5;
+}
+
+.lead-form-card {
+  background-color: #0F172A; /* Contrast Card Escuro */
+  color: #F8FAFC;
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+}
+
+.lead-form-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.lead-form-card p {
+  font-size: 0.85rem;
+  color: #94A3B8;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.lead-form-card .form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.lead-form-card label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94A3B8;
+}
+
+.lead-form-card .form-control {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background-color: #1E293B;
+  border: 1px solid #334155;
+  color: white;
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: var(--transition);
+}
+
+.lead-form-card .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.lead-form-card select.form-control option {
+  background-color: #1E293B;
+  color: white;
+}
+
+.lead-form-card .btn-form {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.lead-form-card .form-disclaimer {
+  font-size: 0.7rem;
+  color: #64748B;
+  margin-top: 12px;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 @keyframes fadeInUp {
@@ -1543,8 +1636,12 @@ select.form-control {
 
 /* RESPONSIVE STYLES */
 @media (max-width: 1024px) {
+  .hero-container-split {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 30px;
+  }
   .hero-title {
-    font-size: 2.75rem;
+    font-size: 2.5rem;
   }
   .testimonials-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1572,6 +1669,18 @@ select.form-control {
 }
 
 @media (max-width: 768px) {
+  .hero {
+    text-align: center;
+    padding-top: 130px;
+    padding-bottom: 40px;
+  }
+  .hero-container-split {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .hero-content {
+    align-items: center;
+  }
   .section {
     padding: 70px 0;
   }
